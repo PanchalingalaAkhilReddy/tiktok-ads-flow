@@ -20,6 +20,9 @@ app.use(cookieParser());
 // In-memory storage for tokens (in production, use database)
 const userSessions = new Map();
 
+// Make userSessions available globally
+global.userSessions = userSessions;
+
 // Routes
 const authRoutes = require('./routes/auth');
 const adsRoutes = require('./routes/ads');
@@ -46,6 +49,3 @@ app.listen(PORT, () => {
   console.log(`✅ Backend server running on http://localhost:${PORT}`);
   console.log(`📡 Ready to handle OAuth and API requests`);
 });
-
-// Export userSessions for use in routes
-module.exports = { userSessions };

@@ -1,11 +1,11 @@
 const express = require('express');
 const axios = require('axios');
 const router = express.Router();
-const { userSessions } = require('../server');
 
 // Validate Music ID
 router.post('/validate-music', async (req, res) => {
   const { musicId, userId } = req.body;
+  const userSessions = global.userSessions;
   
   console.log('🎵 Validating music ID:', musicId);
   
@@ -76,6 +76,8 @@ router.post('/create', async (req, res) => {
     musicOption, 
     musicId 
   } = req.body;
+  
+  const userSessions = global.userSessions;
   
   console.log('📝 Creating ad:', { campaignName, objective, musicOption });
   

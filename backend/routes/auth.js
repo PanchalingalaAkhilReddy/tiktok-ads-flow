@@ -1,7 +1,6 @@
 const express = require('express');
 const axios = require('axios');
 const router = express.Router();
-const { userSessions } = require('../server');
 
 // Generate random user ID
 const generateUserId = () => {
@@ -12,6 +11,7 @@ const generateUserId = () => {
 router.get('/tiktok', (req, res) => {
   const appId = process.env.TIKTOK_APP_ID;
   const redirectUri = process.env.TIKTOK_REDIRECT_URI;
+  const userSessions = global.userSessions;
   
   // Check if TikTok credentials are configured
   if (!appId || appId === 'your_app_id_here') {
@@ -51,6 +51,7 @@ router.get('/tiktok', (req, res) => {
 // STEP 2: OAuth Callback - Exchange code for token
 router.get('/callback', async (req, res) => {
   const { code, state } = req.query;
+  const userSessions = global.userSessions;
   
   console.log('📥 OAuth callback received');
   
@@ -112,6 +113,7 @@ router.get('/callback', async (req, res) => {
 // Get current user info
 router.get('/user/:userId', (req, res) => {
   const { userId } = req.params;
+  const userSessions = global.userSessions;
   const session = userSessions.get(userId);
   
   if (!session) {
@@ -133,6 +135,7 @@ router.get('/user/:userId', (req, res) => {
 // Disconnect/Logout
 router.post('/disconnect', (req, res) => {
   const { userId } = req.body;
+  const userSessions = global.userSessions;
   
   if (userId && userSessions.has(userId)) {
     userSessions.delete(userId);
