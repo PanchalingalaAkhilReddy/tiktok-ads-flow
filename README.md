@@ -11,7 +11,7 @@
 A full-stack web application for managing TikTok advertising campaigns with OAuth 2.0 authentication, conditional validation logic, and comprehensive error handling.
 
 **GitHub:** https://github.com/PanchalingalaAkhilReddy/tiktok-ads-flow  
-**Video Demo:** [Link]
+
 
 ---
 
@@ -611,8 +611,7 @@ app.use(cors({
 
 **Developer:** Akhil Reddy Panchalingala  
 **GitHub:** https://github.com/PanchalingalaAkhilReddy  
-**Email:** [Your Email]  
-**Phone:** [Your Phone]
+
 
 ### Available For:
 
@@ -658,5 +657,3 @@ I appreciate your consideration and welcome the opportunity to discuss this impl
 This project was created as an assignment submission for SoluLab's Frontend Developer Intern position.
 
 ---
-
-*Last Updated: February 1, 2025, 4:00 AM IST*
