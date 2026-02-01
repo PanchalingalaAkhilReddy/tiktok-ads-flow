@@ -1,152 +1,94 @@
-// API Service - Connects React Frontend to Backend
-
 const API_BASE_URL = 'http://localhost:5000/api';
 
-// Store userId in memory
-let currentUserId = null;
-
-export const setUserId = (userId) => {
-  currentUserId = userId;
-  console.log('User ID stored:', userId);
-};
-
-export const getUserId = () => {
-  return currentUserId;
-};
-
-export const clearUserId = () => {
-  currentUserId = null;
-};
-
-// Connect to TikTok - Initiates OAuth flow
-export const connectTikTok = () => {
-  console.log('🔗 Redirecting to backend OAuth...');
-  // Redirect to backend which will handle OAuth
-  window.location.href = `${API_BASE_URL}/auth/tiktok`;
-};
-
-// Get user information
 export const getUserInfo = async (userId) => {
   try {
     const response = await fetch(`${API_BASE_URL}/auth/user/${userId}`);
-    const data = await response.json();
-    
-    if (!data.success) {
-      console.error('Failed to get user info:', data.error);
-    }
-    
-    return data;
+    if (!response.ok) throw new Error('Failed to fetch user info');
+    return await response.json();
   } catch (error) {
     console.error('Error fetching user info:', error);
-    return { 
-      success: false, 
-      error: 'Failed to connect to server. Make sure backend is running.' 
-    };
+    throw error;
   }
 };
 
-// Disconnect from TikTok
-export const disconnectTikTok = async (userId) => {
+export const disconnectAccount = async () => {
   try {
     const response = await fetch(`${API_BASE_URL}/auth/disconnect`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ userId })
     });
-    
-    const data = await response.json();
-    
-    if (data.success) {
-      clearUserId();
-      console.log('✅ Disconnected successfully');
-    }
-    
-    return data;
+    if (!response.ok) throw new Error('Failed to disconnect');
+    return await response.json();
   } catch (error) {
     console.error('Error disconnecting:', error);
-    return { 
-      success: false, 
-      error: 'Failed to disconnect' 
-    };
+    throw error;
   }
 };
 
-// Validate Music ID
-export const validateMusicId = async (musicId, userId) => {
+export const validateMusic = async (musicUrl) => {
   try {
-    console.log('🎵 Validating music ID:', musicId);
-    
     const response = await fetch(`${API_BASE_URL}/ads/validate-music`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ musicId, userId })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ musicUrl }),
     });
-    
-    const data = await response.json();
-    
-    if (data.success) {
-      console.log('✅ Music ID is valid');
-    } else {
-      console.log('❌ Music ID validation failed:', data.error);
-    }
-    
-    return data;
+    if (!response.ok) throw new Error('Failed to validate music');
+    return await response.json();
   } catch (error) {
     console.error('Error validating music:', error);
-    return { 
-      success: false, 
-      error: 'Failed to validate music. Please try again.' 
-    };
+    throw error;
   }
 };
 
-// Create Ad
-export const createAd = async (adData, userId) => {
+export const createAd = async (adData) => {
   try {
-    console.log('📝 Creating ad with data:', adData);
-    
     const response = await fetch(`${API_BASE_URL}/ads/create`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        ...adData,
-        userId
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(adData),
     });
-    
-    const data = await response.json();
-    
-    if (data.success) {
-      console.log('✅ Ad created successfully! Ad ID:', data.adId);
-    } else {
-      console.log('❌ Ad creation failed:', data.error);
-    }
-    
-    return data;
+    if (!response.ok) throw new Error('Failed to create ad');
+    return await response.json();
   } catch (error) {
     console.error('Error creating ad:', error);
-    return { 
-      success: false, 
-      error: 'Failed to create ad. Please try again.' 
-    };
+    throw error;
   }
 };
 
-// Check if backend is running
-export const checkBackendHealth = async () => {
+export const checkHealth = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL.replace('/api', '')}/api/health`);
-    const data = await response.json();
-    console.log(' Backend health check:', data);
-    return data;
+    const response = await fetch('http://localhost:5000/api/health');
+    if (!response.ok) throw new Error('Backend not responding');
+    return await response.json();
   } catch (error) {
-    console.error(' Backend is not running!', error);
-    return { success: false, error: 'Backend server is not running' };
+    console.error('Health check failed:', error);
+    throw error;
   }
+};
+
+// User ID management (localStorage)
+export const setUserId = (userId) => {
+  localStorage.setItem('tiktok_user_id', userId);
+};
+
+export const getUserId = () => {
+  return localStorage.getItem('tiktok_user_id');
+};
+
+export const clearUserId = () => {
+  localStorage.removeItem('tiktok_user_id');
+};
+
+// TikTok OAuth
+export const connectTikTok = () => {
+  window.location.href = 'http://localhost:5000/api/auth/tiktok';
+};
+
+export const disconnectTikTok = async () => {
+  await disconnectAccount();
+  clearUserId();
+};
+
+// Music validation
+export const validateMusicId = async (musicId) => {
+  return await validateMusic(musicId);
 };
